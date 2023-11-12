@@ -2,7 +2,7 @@ version: "3"
 services:
   postgres:
     image: postgres:alpine
-    container_name: postgres
+    container_name: echonrich-postgres
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     environment:
