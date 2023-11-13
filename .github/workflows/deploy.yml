@@ -59,6 +59,6 @@ jobs:
 #        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
 #        with:
 #          task-definition: ${{ steps.setting-task-definition.outputs.task-definition }}
-#          service: echonrich-service
+#          service: service-echonrich
 #          cluster: echonrich-cluster
 #          wait-for-service-stability: false
