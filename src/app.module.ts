@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { PostgreConfigService } from './config/postgre.config.service';
+import { MysqlConfigService } from './config/mysql.config.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-	imports: [ConfigModule.forRoot({ isGlobal: true, cache: true }), TypeOrmModule.forRootAsync({ useClass: PostgreConfigService })],
+	imports: [ConfigModule.forRoot({ isGlobal: true, cache: true }), TypeOrmModule.forRootAsync({ useClass: MysqlConfigService })],
 	controllers: [AppController],
-	providers: [AppService, PostgreConfigService],
+	providers: [AppService, MysqlConfigService],
 })
 export class AppModule {}

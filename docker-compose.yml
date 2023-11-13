@@ -1,14 +1,14 @@
 version: "3"
 services:
-  postgres:
-    image: postgres:alpine
-    container_name: echonrich-postgres
+  mysql:
+    image: mysql:8.0
+    container_name: echonrich-mysql
     ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+      - ${MYSQL_PORT}:${MYSQL_PORT}
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      TZ: Asia/Seoul
   api:
     build:
       context: .
