@@ -43,22 +43,22 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-#      - name: Download Task Definition Template
-#        run: |
-#          aws ecs describe-task-definition --task-definition echonrich-task --query taskDefinition > task-definition.json
-#
-#      - name: Fill in the new image ID in the Amazon ECS task definition
-#        id: setting-task-definition
-#        uses: aws-actions/amazon-ecs-render-task-definition@v1
-#        with:
-#          task-definition: task-definition.json
-#          container-name: echonrich-container
-#          image: ${{ steps.build-image.outputs.image }}
-#
-#      - name: Deploy Amazon ECS task definition
-#        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-#        with:
-#          task-definition: ${{ steps.setting-task-definition.outputs.task-definition }}
-#          service: service-echonrich
-#          cluster: echonrich-cluster
-#          wait-for-service-stability: false
+      - name: Download Task Definition Template
+        run: |
+          aws ecs describe-task-definition --task-definition echonrich-task --query taskDefinition > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: setting-task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: echonrich-container
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.setting-task-definition.outputs.task-definition }}
+          service: echonrich-s
+          cluster: echonrich-cluster
+          wait-for-service-stability: false
