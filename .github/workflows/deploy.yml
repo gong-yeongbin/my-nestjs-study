@@ -37,26 +37,31 @@ jobs:
             --build-arg AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
             --build-arg AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
             --build-arg AWS_REGION=${{ secrets.AWS_REGION }} \
+            --build-arg POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
+            --build-arg POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
+            --build-arg POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+            --build-arg POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+            --build-arg POSTGRES_DATABASE=${{ secrets.POSTGRES_DATABASE }} \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-#      - name: Download Task Definition Template
-#        run: |
-#          aws ecs describe-task-definition --task-definition hanghae-task --query taskDefinition > task-definition.json
-#
-#      - name: Fill in the new image ID in the Amazon ECS task definition
-#        id: setting-task-definition
-#        uses: aws-actions/amazon-ecs-render-task-definition@v1
-#        with:
-#          task-definition: task-definition.json
-#          container-name: hanghae-container
-#          image: ${{ steps.build-image.outputs.image }}
-#
-#      - name: Deploy Amazon ECS task definition
-#        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-#        with:
-#          task-definition: ${{ steps.setting-task-definition.outputs.task-definition }}
-#          service: hanghae-service
-#          cluster: nestjs-cluster
-#          wait-for-service-stability: false
+      - name: Download Task Definition Template
+        run: |
+          aws ecs describe-task-definition --task-definition echonrich-task --query taskDefinition > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: setting-task-definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: echonrich-container
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.setting-task-definition.outputs.task-definition }}
+          service: echonrich-service
+          cluster: echonrich-cluster
+          wait-for-service-stability: false
