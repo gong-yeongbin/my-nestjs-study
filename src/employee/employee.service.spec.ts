@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EmployeeService } from './employee.service';
 import { IEmployee } from './employee.interface';
 import { NotFoundException } from '@nestjs/common';
+import { EmployeeFindDto } from './dto/employee-find.dto';
 
 class MockEmployeeRepositroy implements IEmployee {
 	getEmployee = jest.fn();
@@ -22,10 +23,13 @@ describe('EmployeeService', () => {
 	});
 
 	it('[실패] 특정 사원의 현재 정보 조회 사원 정보 없음', async () => {
+		const employeeFindDto: EmployeeFindDto = { employee_id: 1 };
 		employeeRepository.getEmployee = jest.fn().mockResolvedValue(null);
-		expect(async () => await service.getEmployee(1)).rejects.toThrowError(new NotFoundException());
+		expect(async () => await service.getEmployee(employeeFindDto)).rejects.toThrowError(new NotFoundException());
 	});
+
 	it('[성공] 특정 사원의 현재 정보 조회 사원', async () => {
+		const employeeFindDto: EmployeeFindDto = { employee_id: 100 };
 		employeeRepository.getEmployee = jest.fn().mockResolvedValue({
 			employeeId: 100,
 			firstName: 'Steven',
@@ -40,15 +44,18 @@ describe('EmployeeService', () => {
 			departmentId: 90,
 		});
 
-		await service.getEmployee(100);
+		await service.getEmployee(employeeFindDto);
 		expect(employeeRepository.getEmployee).toBeCalledTimes(1);
 	});
 
 	it('[실패] 특정 사원의 이력 정보 조회', async () => {
+		const employeeFindDto: EmployeeFindDto = { employee_id: 1 };
 		employeeRepository.getEmployeeDetail = jest.fn().mockResolvedValue(null);
-		expect(async () => await service.getEmployee(1)).rejects.toThrowError(new NotFoundException());
+		expect(async () => await service.getEmployee(employeeFindDto)).rejects.toThrowError(new NotFoundException());
 	});
+
 	it('[성공] 특정 사원의 이력 정보 조회', async () => {
+		const employeeFindDto: EmployeeFindDto = { employee_id: 200 };
 		employeeRepository.getEmployeeDetail = jest.fn().mockResolvedValue({
 			employeeId: 200,
 			firstName: 'Jennifer',
@@ -78,7 +85,7 @@ describe('EmployeeService', () => {
 			},
 		});
 
-		await service.getEmployeeDetail(200);
+		await service.getEmployeeDetail(employeeFindDto);
 		expect(employeeRepository.getEmployeeDetail).toBeCalledTimes(1);
 	});
 });
