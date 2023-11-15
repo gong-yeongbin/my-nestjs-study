@@ -1,13 +1,13 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { Departments } from './Departments';
-import { Jobs } from './Jobs';
-import { JobHistory } from './JobHistory';
+import { DepartmentsEntity } from './departments.entity';
+import { JobsEntity } from './jobs.entity';
+import { JobHistoryEntity } from './jobHistory.entity';
 
 @Index('department_id', ['departmentId'], {})
 @Index('job_id', ['jobId'], {})
 @Index('manager_id', ['managerId'], {})
 @Entity('employees', { schema: 'echonrich' })
-export class Employees {
+export class EmployeesEntity {
 	@Column('int', { primary: true, name: 'employee_id', unsigned: true })
 	employeeId: number;
 
@@ -46,33 +46,33 @@ export class Employees {
 	@Column('int', { name: 'department_id', nullable: true, unsigned: true })
 	departmentId: number | null;
 
-	@OneToMany(() => Departments, (departments) => departments.manager)
-	departments: Departments[];
+	@OneToMany(() => DepartmentsEntity, (departments) => departments.manager)
+	departments: DepartmentsEntity[];
 
-	@ManyToOne(() => Jobs, (jobs) => jobs.employees, {
+	@ManyToOne(() => JobsEntity, (jobs) => jobs.employees, {
 		onDelete: 'NO ACTION',
 		onUpdate: 'NO ACTION',
 	})
 	@JoinColumn([{ name: 'job_id', referencedColumnName: 'jobId' }])
-	job: Jobs;
+	job: JobsEntity;
 
-	@ManyToOne(() => Departments, (departments) => departments.employees, {
+	@ManyToOne(() => DepartmentsEntity, (departments) => departments.employees, {
 		onDelete: 'NO ACTION',
 		onUpdate: 'NO ACTION',
 	})
 	@JoinColumn([{ name: 'department_id', referencedColumnName: 'departmentId' }])
-	department: Departments;
+	department: DepartmentsEntity;
 
-	@ManyToOne(() => Employees, (employees) => employees.employees, {
+	@ManyToOne(() => EmployeesEntity, (employees) => employees.employees, {
 		onDelete: 'NO ACTION',
 		onUpdate: 'NO ACTION',
 	})
 	@JoinColumn([{ name: 'manager_id', referencedColumnName: 'employeeId' }])
-	manager: Employees;
+	manager: EmployeesEntity;
 
-	@OneToMany(() => Employees, (employees) => employees.manager)
-	employees: Employees[];
+	@OneToMany(() => EmployeesEntity, (employees) => employees.manager)
+	employees: EmployeesEntity[];
 
-	@OneToMany(() => JobHistory, (jobHistory) => jobHistory.employee)
-	jobHistories: JobHistory[];
+	@OneToMany(() => JobHistoryEntity, (jobHistory) => jobHistory.employee)
+	jobHistories: JobHistoryEntity[];
 }

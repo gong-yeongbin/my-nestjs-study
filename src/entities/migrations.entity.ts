@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('migrations', { schema: 'echonrich' })
-export class Migrations {
+export class MigrationsEntity {
 	@PrimaryGeneratedColumn({ type: 'int', name: 'id' })
 	id: number;
 

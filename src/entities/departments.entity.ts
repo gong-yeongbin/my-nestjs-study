@@ -1,12 +1,12 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { Locations } from './Locations';
-import { Employees } from './Employees';
-import { JobHistory } from './JobHistory';
+import { LocationsEntity } from './locations.entity';
+import { EmployeesEntity } from './employees.entity';
+import { JobHistoryEntity } from './jobHistory.entity';
 
 @Index('location_id', ['locationId'], {})
 @Index('manager_id', ['managerId'], {})
 @Entity('departments', { schema: 'echonrich' })
-export class Departments {
+export class DepartmentsEntity {
 	@Column('int', { primary: true, name: 'department_id', unsigned: true })
 	departmentId: number;
 
@@ -19,23 +19,23 @@ export class Departments {
 	@Column('int', { name: 'location_id', nullable: true, unsigned: true })
 	locationId: number | null;
 
-	@ManyToOne(() => Locations, (locations) => locations.departments, {
+	@ManyToOne(() => LocationsEntity, (locations) => locations.departments, {
 		onDelete: 'NO ACTION',
 		onUpdate: 'NO ACTION',
 	})
 	@JoinColumn([{ name: 'location_id', referencedColumnName: 'locationId' }])
-	location: Locations;
+	location: LocationsEntity;
 
-	@ManyToOne(() => Employees, (employees) => employees.departments, {
+	@ManyToOne(() => EmployeesEntity, (employees) => employees.departments, {
 		onDelete: 'NO ACTION',
 		onUpdate: 'NO ACTION',
 	})
 	@JoinColumn([{ name: 'manager_id', referencedColumnName: 'employeeId' }])
-	manager: Employees;
+	manager: EmployeesEntity;
 
-	@OneToMany(() => Employees, (employees) => employees.department)
-	employees: Employees[];
+	@OneToMany(() => EmployeesEntity, (employees) => employees.department)
+	employees: EmployeesEntity[];
 
-	@OneToMany(() => JobHistory, (jobHistory) => jobHistory.department)
-	jobHistories: JobHistory[];
+	@OneToMany(() => JobHistoryEntity, (jobHistory) => jobHistory.department)
+	jobHistories: JobHistoryEntity[];
 }

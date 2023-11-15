@@ -1,10 +1,10 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Departments } from './Departments';
-import { Countries } from './Countries';
+import { DepartmentsEntity } from './departments.entity';
+import { CountriesEntity } from './countries.entity';
 
 @Index('country_id', ['countryId'], {})
 @Entity('locations', { schema: 'echonrich' })
-export class Locations {
+export class LocationsEntity {
 	@PrimaryGeneratedColumn({ type: 'int', name: 'location_id', unsigned: true })
 	locationId: number;
 
@@ -23,13 +23,13 @@ export class Locations {
 	@Column('char', { name: 'country_id', length: 2 })
 	countryId: string;
 
-	@OneToMany(() => Departments, (departments) => departments.location)
-	departments: Departments[];
+	@OneToMany(() => DepartmentsEntity, (departments) => departments.location)
+	departments: DepartmentsEntity[];
 
-	@ManyToOne(() => Countries, (countries) => countries.locations, {
+	@ManyToOne(() => CountriesEntity, (countries) => countries.locations, {
 		onDelete: 'NO ACTION',
 		onUpdate: 'NO ACTION',
 	})
 	@JoinColumn([{ name: 'country_id', referencedColumnName: 'countryId' }])
-	country: Countries;
+	country: CountriesEntity;
 }
