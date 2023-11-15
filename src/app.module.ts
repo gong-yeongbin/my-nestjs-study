@@ -5,9 +5,15 @@ import { ConfigModule } from '@nestjs/config';
 import { MysqlConfigService } from './config/mysql.config.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee/employee.module';
+import { DepartmentModule } from './department/department.module';
 
 @Module({
-	imports: [ConfigModule.forRoot({ isGlobal: true, cache: true }), TypeOrmModule.forRootAsync({ useClass: MysqlConfigService }), EmployeeModule],
+	imports: [
+		ConfigModule.forRoot({ isGlobal: true, cache: true }),
+		TypeOrmModule.forRootAsync({ useClass: MysqlConfigService }),
+		EmployeeModule,
+		DepartmentModule,
+	],
 	controllers: [AppController],
 	providers: [AppService, MysqlConfigService],
 })
