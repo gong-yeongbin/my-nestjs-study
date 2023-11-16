@@ -7,11 +7,11 @@ export class EmployeeController {
 
 	@Get(':employee_id')
 	async getEmployee(@Param('employee_id') employee_id: number) {
-		return await this.employeeService.getEmployee(employee_id);
+		return await this.employeeService.findEmployee(employee_id);
 	}
 
 	@Get('detail/:employee_id')
 	async getEmployeeDetail(@Param('employee_id') employee_id: number) {
-		return await this.employeeService.getEmployeeDetail(employee_id);
+		return await this.employeeService.findEmployeeDetail(employee_id);
 	}
 }

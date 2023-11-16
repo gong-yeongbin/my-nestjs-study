@@ -4,8 +4,8 @@ import { IEmployee } from './employee.interface';
 import { NotFoundException } from '@nestjs/common';
 
 class MockEmployeeRepositroy implements IEmployee {
-	getEmployee = jest.fn();
-	getEmployeeDetail = jest.fn();
+	findEmployee = jest.fn();
+	findEmployeeDetail = jest.fn();
 }
 
 describe('EmployeeService', () => {
@@ -22,12 +22,12 @@ describe('EmployeeService', () => {
 	});
 
 	it('[실패] 특정 사원의 현재 정보 조회 사원 정보 없음', async () => {
-		employeeRepository.getEmployee = jest.fn().mockResolvedValue(null);
-		expect(async () => await service.getEmployee(1)).rejects.toThrowError(new NotFoundException());
+		employeeRepository.findEmployee = jest.fn().mockResolvedValue(null);
+		expect(async () => await service.findEmployee(1)).rejects.toThrowError(new NotFoundException());
 	});
 
 	it('[성공] 특정 사원의 현재 정보 조회 사원', async () => {
-		employeeRepository.getEmployee = jest.fn().mockResolvedValue({
+		employeeRepository.findEmployee = jest.fn().mockResolvedValue({
 			employeeId: 100,
 			firstName: 'Steven',
 			lastName: 'King',
@@ -41,17 +41,17 @@ describe('EmployeeService', () => {
 			departmentId: 90,
 		});
 
-		await service.getEmployee(100);
-		expect(employeeRepository.getEmployee).toBeCalledTimes(1);
+		await service.findEmployee(100);
+		expect(employeeRepository.findEmployee).toBeCalledTimes(1);
 	});
 
 	it('[실패] 특정 사원의 이력 정보 조회', async () => {
-		employeeRepository.getEmployeeDetail = jest.fn().mockResolvedValue(null);
-		expect(async () => await service.getEmployee(1)).rejects.toThrowError(new NotFoundException());
+		employeeRepository.findEmployeeDetail = jest.fn().mockResolvedValue(null);
+		expect(async () => await service.findEmployee(1)).rejects.toThrowError(new NotFoundException());
 	});
 
 	it('[성공] 특정 사원의 이력 정보 조회', async () => {
-		employeeRepository.getEmployeeDetail = jest.fn().mockResolvedValue({
+		employeeRepository.findEmployeeDetail = jest.fn().mockResolvedValue({
 			employeeId: 200,
 			firstName: 'Jennifer',
 			lastName: 'Whalen',
@@ -80,7 +80,7 @@ describe('EmployeeService', () => {
 			},
 		});
 
-		await service.getEmployeeDetail(200);
-		expect(employeeRepository.getEmployeeDetail).toBeCalledTimes(1);
+		await service.findEmployeeDetail(200);
+		expect(employeeRepository.findEmployeeDetail).toBeCalledTimes(1);
 	});
 });

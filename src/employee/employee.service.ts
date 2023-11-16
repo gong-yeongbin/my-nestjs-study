@@ -6,16 +6,16 @@ import { EmployeesEntity } from '../entities/employees.entity';
 export class EmployeeService {
 	constructor(@Inject('EmployeeRepository') private readonly employeeRepository: IEmployee) {}
 
-	async getEmployee(employee_id: number) {
-		const employeeEntity: EmployeesEntity | null = await this.employeeRepository.getEmployee(employee_id);
+	async findEmployee(employee_id: number) {
+		const employeeEntity: EmployeesEntity | null = await this.employeeRepository.findEmployee(employee_id);
 
 		if (!employeeEntity) throw new NotFoundException();
 
 		return employeeEntity;
 	}
 
-	async getEmployeeDetail(employee_id: number) {
-		const employeeEntity: EmployeesEntity | null = await this.employeeRepository.getEmployeeDetail(employee_id);
+	async findEmployeeDetail(employee_id: number) {
+		const employeeEntity: EmployeesEntity | null = await this.employeeRepository.findEmployeeDetail(employee_id);
 
 		if (!employeeEntity) throw new NotFoundException();
 

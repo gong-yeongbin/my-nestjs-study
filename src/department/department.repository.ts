@@ -9,7 +9,15 @@ export class DepartmentRepository extends Repository<DepartmentsEntity> implemen
 		super(DepartmentsEntity, dataSource.createEntityManager());
 	}
 
-	async findDepartmentAndLocation(department_id: number): Promise<DepartmentsEntity> | null {
+	async findDepartment(department_id: number) {
+		try {
+			return this.findOne({ where: { departmentId: department_id } });
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
+	async findDepartmentAndLocation(department_id: number): Promise<DepartmentsEntity> {
 		try {
 			return await this.findOne({ where: { departmentId: department_id }, relations: ['location'] });
 		} catch (e) {

@@ -4,6 +4,7 @@ import { IDepartment } from './department.interface';
 import { NotFoundException } from '@nestjs/common';
 
 class MockDepartmentRepository implements IDepartment {
+	findDepartment = jest.fn();
 	findDepartmentAndLocation = jest.fn();
 }
 
