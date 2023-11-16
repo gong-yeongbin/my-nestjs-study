@@ -6,6 +6,7 @@ import { MysqlConfigService } from './config/mysql.config.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee/employee.module';
 import { DepartmentModule } from './department/department.module';
+import { OpendataModule } from './opendata/opendata.module';
 
 @Module({
 	imports: [
@@ -13,6 +14,7 @@ import { DepartmentModule } from './department/department.module';
 		TypeOrmModule.forRootAsync({ useClass: MysqlConfigService }),
 		EmployeeModule,
 		DepartmentModule,
+		OpendataModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, MysqlConfigService],
