@@ -16,7 +16,7 @@ async function bootstrap() {
 		})
 	);
 
-	const config = new DocumentBuilder().setTitle('에코앤리치 과제 api').setVersion('1.0').addTag('echonrich').build();
+	const config = new DocumentBuilder().setTitle('에코앤리치 과제 api').setVersion('1.0').build();
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('api', app, document);
 
