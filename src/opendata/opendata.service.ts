@@ -1,14 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IOpendata } from './opendata.interface';
+import { OpendataUltrasrcncstGetDto } from './dto/opendata-ultrasrcncst-get.dto';
 
 @Injectable()
 export class OpendataService {
 	constructor(@Inject('OpenDataRepository') private readonly openDataRepository: IOpendata) {}
 
-	async getUltraSrtNcst(ultrasrtncstGetDto: { page_no: number; num_of_rows: number; base_date: string; base_time: string; nx: number; ny: number }) {
+	async getUltraSrtNcst(opendataUltrasrcncstGetDto: OpendataUltrasrcncstGetDto) {
+		const opendataUltrasrcncstGetEntity = {
+			page_no: opendataUltrasrcncstGetDto.page_no,
+			num_of_rows: opendataUltrasrcncstGetDto.num_of_rows,
+			base_date: opendataUltrasrcncstGetDto.base_date,
+			base_time: opendataUltrasrcncstGetDto.base_time,
+			nx: opendataUltrasrcncstGetDto.nx,
+			ny: opendataUltrasrcncstGetDto.ny,
+		};
 		const startTime = new Date().getTime();
 
-		const resultOpenData = await this.openDataRepository.getUltraSrtNcst(ultrasrtncstGetDto);
+		const resultOpenData = await this.openDataRepository.getUltraSrtNcst(opendataUltrasrcncstGetEntity);
 
 		const elapsedTime = new Date().getTime() - startTime;
 
