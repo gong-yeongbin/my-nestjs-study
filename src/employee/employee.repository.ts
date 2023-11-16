@@ -9,7 +9,7 @@ export class EmployeeRepository extends Repository<EmployeesEntity> implements I
 		super(EmployeesEntity, dataSource.createEntityManager());
 	}
 
-	async findEmployee(employee_id: number): Promise<EmployeesEntity> | null {
+	async findEmployee(employee_id: number): Promise<EmployeesEntity> {
 		try {
 			return await this.findOne({ where: { employeeId: employee_id } });
 		} catch (e) {
@@ -20,6 +20,22 @@ export class EmployeeRepository extends Repository<EmployeesEntity> implements I
 	async findEmployeeDetail(employee_id: number): Promise<EmployeesEntity> {
 		try {
 			return await this.findOne({ where: { employeeId: employee_id }, relations: ['job', 'department', 'manager'] });
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
+	async findEmployeeByDepartment(department_id: number) {
+		try {
+			return await this.find({ where: { departmentId: department_id } });
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
+	async saveEmployee(emyployeeEntity: EmployeesEntity[]) {
+		try {
+			await this.save(emyployeeEntity);
 		} catch (e) {
 			console.log(e);
 		}
