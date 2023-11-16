@@ -19,6 +19,7 @@ COPY . .
 
 RUN npm install
 RUN npm run build
+RUN npm run typeorm -- migration:run -d src/config/data-source.ts
 
 EXPOSE $PORT
 ENTRYPOINT ["npm", "start"]
