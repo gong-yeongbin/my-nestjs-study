@@ -33,7 +33,15 @@ export class EmployeeRepository extends Repository<EmployeesEntity> implements I
 		}
 	}
 
-	async saveEmployee(emyployeeEntity: EmployeesEntity[]) {
+	async saveEmployee(emyployeeEntity: EmployeesEntity) {
+		try {
+			await this.save(emyployeeEntity);
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
+	async saveEmployeeList(emyployeeEntity: EmployeesEntity[]) {
 		try {
 			await this.save(emyployeeEntity);
 		} catch (e) {

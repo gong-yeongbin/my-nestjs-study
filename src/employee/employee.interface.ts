@@ -4,5 +4,6 @@ export interface IEmployee {
 	findEmployee(employee_id: number);
 	findEmployeeDetail(employee_id: number);
 	findEmployeeByDepartment(department_id: number);
-	saveEmployee(emyployeeEntity: EmployeesEntity[]);
+	saveEmployee(emyployeeEntity: EmployeesEntity);
+	saveEmployeeList(emyployeeEntity: EmployeesEntity[]);
 }

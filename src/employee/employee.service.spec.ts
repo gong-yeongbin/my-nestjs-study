@@ -15,6 +15,7 @@ class MockEmployeeRepositroy implements IEmployee {
 	findEmployeeDetail = jest.fn();
 	findEmployeeByDepartment = jest.fn();
 	saveEmployee = jest.fn();
+	saveEmployeeList = jest.fn();
 }
 
 describe('EmployeeService', () => {
@@ -100,14 +101,14 @@ describe('EmployeeService', () => {
 	});
 
 	it('[실패] 특정 부성의 급여를 특정 비율로 인상', async () => {
-		const employeeUpdateDto: { department_id: number; increase: number } = { department_id: 1, increase: 5 };
+		const employeeSalaryUpdateDto: { department_id: number; increase: number } = { department_id: 1, increase: 5 };
 		departmentRepository.findDepartment = jest.fn().mockResolvedValue(null);
 		employeeRepository.findEmployeeByDepartment = jest.fn().mockResolvedValue([]);
 
-		expect(() => service.updateSalaryByDepartment(employeeUpdateDto)).rejects.toThrowError(new NotFoundException());
+		expect(() => service.updateSalaryByDepartment(employeeSalaryUpdateDto)).rejects.toThrowError(new NotFoundException());
 	});
 	it('[성공] 특정 부성의 급여를 특정 비율로 인상', async () => {
-		const employeeUpdateDto: { department_id: number; increase: number } = { department_id: 10, increase: 5 };
+		const employeeSalaryUpdateDto: { department_id: number; increase: number } = { department_id: 10, increase: 5 };
 		departmentRepository.findDepartment = jest.fn().mockResolvedValue({
 			departmentId: 10,
 			departmentName: 'Administration',
@@ -131,9 +132,83 @@ describe('EmployeeService', () => {
 			},
 		]);
 
-		await service.updateSalaryByDepartment(employeeUpdateDto);
+		await service.updateSalaryByDepartment(employeeSalaryUpdateDto);
 		expect(departmentRepository.findDepartment).toBeCalledTimes(1);
 		expect(employeeRepository.findEmployeeByDepartment).toBeCalledTimes(1);
+		expect(employeeRepository.saveEmployeeList).toBeCalledTimes(1);
+	});
+
+	it('[실패]사원 정보 업데이트', async () => {
+		const employeeUpdateDto: {
+			employee_id: number;
+			first_name: string;
+			last_name: string;
+			email: string;
+			phone_number: string;
+			hire_date: string;
+			job_id: string;
+			salary: string;
+			commission_pct: string;
+			manager_id: number;
+			department_id: number;
+		} = {
+			employee_id: 200,
+			first_name: 'Jennifer',
+			last_name: 'Whalen',
+			email: 'JWHALEN',
+			phone_number: '515.123.4444',
+			hire_date: '1987-09-17',
+			job_id: 'AD_ASST',
+			salary: '4400.00',
+			commission_pct: null,
+			manager_id: 101,
+			department_id: 10,
+		};
+		employeeRepository.findEmployee = jest.fn().mockResolvedValue(null);
+		expect(() => service.updateEmployee(employeeUpdateDto)).rejects.toThrowError(new NotFoundException());
+	});
+
+	it('[성공]사원 정보 업데이트', async () => {
+		const employeeUpdateDto: {
+			employee_id: number;
+			first_name: string;
+			last_name: string;
+			email: string;
+			phone_number: string;
+			hire_date: string;
+			job_id: string;
+			salary: string;
+			commission_pct: string;
+			manager_id: number;
+			department_id: number;
+		} = {
+			employee_id: 200,
+			first_name: 'Jennifer',
+			last_name: 'Whalen',
+			email: 'JWHALEN',
+			phone_number: '515.123.4444',
+			hire_date: '1987-09-17',
+			job_id: 'AD_ASST',
+			salary: '4400.00',
+			commission_pct: null,
+			manager_id: 101,
+			department_id: 10,
+		};
+		employeeRepository.findEmployee = jest.fn().mockResolvedValue({
+			employee_id: 200,
+			first_name: 'Jennifer',
+			last_name: 'Whalen',
+			email: 'JWHALEN',
+			phone_number: '515.123.4444',
+			hire_date: '1987-09-17',
+			job_id: 'AD_ASST',
+			salary: '4400.00',
+			commission_pct: null,
+			manager_id: 101,
+			department_id: 10,
+		});
+
+		await service.updateEmployee(employeeUpdateDto);
 		expect(employeeRepository.saveEmployee).toBeCalledTimes(1);
 	});
 });
