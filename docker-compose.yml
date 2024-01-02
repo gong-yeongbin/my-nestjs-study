@@ -1,19 +1,11 @@
 version: "3"
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: echonrich-mysql
+  db:
+    image: postgres:14-alpine
+    container_name: study-postgre
     ports:
-      - ${MYSQL_PORT}:${MYSQL_PORT}
+      - 5432:5432
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      TZ: Asia/Seoul
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - PORT=${PORT}
-    ports:
-      - ${PORT}:${PORT}
+      - POSTGRES_PASSWORD=S3cret
+      - POSTGRES_USER=study_user
+      - POSTGRES_DB=study_db
