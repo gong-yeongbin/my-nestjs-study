@@ -1,65 +1,65 @@
-name: deploy to amazone ecr
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: login to amazon ecr
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: build, tag, and push image to amazone ecr
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: echonrich
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build \
-            --build-arg PORT=3000 \
-            --build-arg MYSQL_HOST=${{ secrets.MYSQL_HOST }} \
-            --build-arg MYSQL_PORT=${{ secrets.MYSQL_PORT }} \
-            --build-arg MYSQL_USER=${{ secrets.MYSQL_USER }} \
-            --build-arg MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
-            --build-arg MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} \
-            --build-arg OPEN_DATA_SERVICE_KEY=${{ secrets.OPEN_DATA_SERVICE_KEY }} \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
-      - name: Download Task Definition Template
-        run: |
-          aws ecs describe-task-definition --task-definition echonrich-task --query taskDefinition > task-definition.json
-
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: setting-task-definition
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: echonrich-container
-          image: ${{ steps.build-image.outputs.image }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.setting-task-definition.outputs.task-definition }}
-          service: echonrich-s
-          cluster: echonrich-cluster
-          wait-for-service-stability: false
+#name: deploy to amazone ecr
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  deploy:
+#    name: Deploy
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: checkout
+#        uses: actions/checkout@v2
+#
+#      - name: configure aws credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#
+#      - name: login to amazon ecr
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1
+#
+#      - name: build, tag, and push image to amazone ecr
+#        id: build-image
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: echonrich
+#          IMAGE_TAG: ${{ github.sha }}
+#        run: |
+#          docker build \
+#            --build-arg PORT=3000 \
+#            --build-arg MYSQL_HOST=${{ secrets.MYSQL_HOST }} \
+#            --build-arg MYSQL_PORT=${{ secrets.MYSQL_PORT }} \
+#            --build-arg MYSQL_USER=${{ secrets.MYSQL_USER }} \
+#            --build-arg MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
+#            --build-arg MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }} \
+#            --build-arg OPEN_DATA_SERVICE_KEY=${{ secrets.OPEN_DATA_SERVICE_KEY }} \
+#            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+#
+#      - name: Download Task Definition Template
+#        run: |
+#          aws ecs describe-task-definition --task-definition echonrich-task --query taskDefinition > task-definition.json
+#
+#      - name: Fill in the new image ID in the Amazon ECS task definition
+#        id: setting-task-definition
+#        uses: aws-actions/amazon-ecs-render-task-definition@v1
+#        with:
+#          task-definition: task-definition.json
+#          container-name: echonrich-container
+#          image: ${{ steps.build-image.outputs.image }}
+#
+#      - name: Deploy Amazon ECS task definition
+#        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+#        with:
+#          task-definition: ${{ steps.setting-task-definition.outputs.task-definition }}
+#          service: echonrich-s
+#          cluster: echonrich-cluster
+#          wait-for-service-stability: false
