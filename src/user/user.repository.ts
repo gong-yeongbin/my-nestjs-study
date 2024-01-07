@@ -16,11 +16,11 @@ export class UserRepository {
 		}
 	}
 
-	async createUser(createUserDto: CreateUserDto): Promise<boolean> {
+	async createUser(createUserDto: CreateUserDto): Promise<User | null> {
 		try {
 			const user = await this.prisma.user.create({ data: createUserDto });
 
-			return user ? true : false;
+			return user ? user : null;
 		} catch (e) {
 			console.log(e);
 		}

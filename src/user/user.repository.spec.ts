@@ -37,16 +37,16 @@ describe('UserRepository', () => {
 		expect(result).toBe(findUser);
 	});
 
-	it('user create 테스트 결과 false', async () => {
+	it('user create 테스트 결과 failed', async () => {
 		jest.spyOn(prisma.user, 'create').mockResolvedValue(null);
 
 		const result = await repository.createUser(createUserDto);
 
 		expect(prisma.user.create).toBeCalledTimes(1);
-		expect(result).toBe(false);
+		expect(result).toBe(null);
 	});
 
-	it('user create 테스트 결과 true', async () => {
+	it('user create 테스트 결과 success', async () => {
 		const createUser = { idx: 1, ...createUserDto };
 
 		jest.spyOn(prisma.user, 'create').mockResolvedValue(createUser);
@@ -54,6 +54,6 @@ describe('UserRepository', () => {
 		const result = await repository.createUser(createUserDto);
 
 		expect(prisma.user.create).toBeCalledTimes(1);
-		expect(result).toBe(true);
+		expect(result).toBe(createUser);
 	});
 });
