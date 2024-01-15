@@ -23,4 +23,26 @@ export class UserRepository {
 			console.log(e);
 		}
 	}
+
+	private readonly users = [
+		{
+			idx: 1,
+			id: 'userId1',
+			name: 'john',
+		},
+		{
+			idx: 2,
+			id: 'userId2',
+			name: 'maria',
+		},
+	];
+
+	findOneByUserName(name: string) {
+		try {
+			return this.users.find((user) => user.name == name);
+			// return await this.prisma.user.findFirst({ where: { name: name } });
+		} catch (e) {
+			console.log(e);
+		}
+	}
 }

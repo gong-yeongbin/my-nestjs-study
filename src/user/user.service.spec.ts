@@ -3,13 +3,11 @@ import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
 import { PrismaService } from '../prisma.service';
 import { CreateUserDto } from './dtos';
-import { User } from '@prisma/client';
+import { NotFoundException } from '@nestjs/common';
 
 describe('UserService', () => {
 	let service: UserService;
 	let repository: UserRepository;
-
-	const createUserDto: CreateUserDto = { id: 'create_user', name: '홍길동' };
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -19,6 +17,8 @@ describe('UserService', () => {
 		service = module.get<UserService>(UserService);
 		repository = module.get<UserRepository>(UserRepository);
 	});
+
+	const createUserDto: CreateUserDto = { id: 'create_user', name: '홍길동' };
 
 	it('create user user_id 중복 error', () => {
 		repository.findByUserId = jest.fn().mockResolvedValue({ idx: 1, ...createUserDto });
@@ -43,5 +43,27 @@ describe('UserService', () => {
 
 		expect(repository.findByUserId).toBeCalledTimes(1);
 		expect(repository.createUser).toBeCalledTimes(1);
+	});
+
+	const findOneByUserNameDto: { name: string } = { name: 'userName' };
+
+	it('findOneByUserName 1 call', async () => {
+		jest.spyOn(repository, 'findOneByUserName').mockReturnValue({ idx: 1, id: 'userId', ...findOneByUserNameDto });
+		await service.findOneByUserName(findOneByUserNameDto.name);
+
+		expect(repository.findOneByUserName).toBeCalledTimes(1);
+	});
+
+	it('findOneByUserName return undefined test', () => {
+		repository.findOneByUserName = jest.fn().mockReturnValue(undefined);
+
+		expect(async () => service.findOneByUserName(findOneByUserNameDto.name)).rejects.toThrow(new NotFoundException());
+	});
+
+	it('findOneByUserName return success', async () => {
+		repository.findOneByUserName = jest.fn().mockResolvedValue({ idx: 1, id: 'userId1', ...findOneByUserNameDto });
+
+		const result = await service.findOneByUserName(findOneByUserNameDto.name);
+		expect(result).toEqual({ idx: 1, id: 'userId1', ...findOneByUserNameDto });
 	});
 });

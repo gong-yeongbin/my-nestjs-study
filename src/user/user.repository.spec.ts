@@ -7,16 +7,16 @@ describe('UserRepository', () => {
 	let repository: UserRepository;
 	let prisma: PrismaService;
 
-	const createUserDto: CreateUserDto = { id: 'user_id', name: '홍길동' };
-
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [UserRepository, PrismaService],
 		}).compile();
-
 		repository = module.get<UserRepository>(UserRepository);
+
 		prisma = module.get<PrismaService>(PrismaService);
 	});
+
+	const createUserDto: CreateUserDto = { id: 'user_id', name: '홍길동' };
 
 	it('user findByUserId 테스트 결과 null', async () => {
 		jest.spyOn(prisma.user, 'findFirst').mockResolvedValue(null);
@@ -37,5 +37,15 @@ describe('UserRepository', () => {
 		await repository.createUser(createUserDto);
 
 		expect(prisma.user.create).toBeCalledTimes(1);
+	});
+
+	const findOneByUserNameDto: { name: string } = { name: 'findUserName' };
+
+	it('find one by user name test', async () => {
+		// jest.spyOn(prisma.user, 'findFirst').mockResolvedValue({ idx: 1, id: 'userId', ...findOneByUserNameDto });
+		//
+		// await repository.findOneByUserName(findOneByUserNameDto.name);
+		//
+		// expect(prisma.user.findFirst).toBeCalledTimes(1);
 	});
 });
