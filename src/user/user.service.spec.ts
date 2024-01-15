@@ -3,10 +3,12 @@ import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
 import { PrismaService } from '../prisma.service';
 import { CreateUserDto } from './dtos';
+import { User } from '@prisma/client';
 
 describe('UserService', () => {
 	let service: UserService;
 	let repository: UserRepository;
+
 	const createUserDto: CreateUserDto = { id: 'create_user', name: '홍길동' };
 
 	beforeEach(async () => {
@@ -19,15 +21,14 @@ describe('UserService', () => {
 	});
 
 	it('create user user_id 중복 error', () => {
-		const findUser = { idx: 1, ...createUserDto };
-		jest.spyOn(repository, 'findByUserId').mockResolvedValue(findUser);
+		repository.findByUserId = jest.fn().mockResolvedValue({ idx: 1, ...createUserDto });
 
 		expect(async () => await service.createUser(createUserDto)).rejects.toThrow();
 	});
 
 	it('create user create return error', () => {
-		jest.spyOn(repository, 'findByUserId').mockResolvedValue(null);
-		jest.spyOn(repository, 'createUser').mockResolvedValue(null);
+		repository.findByUserId = jest.fn().mockResolvedValue(null);
+		repository.createUser = jest.fn().mockResolvedValue(null);
 
 		expect(async () => await service.createUser(createUserDto)).rejects.toThrow();
 	});
@@ -35,8 +36,8 @@ describe('UserService', () => {
 	it('create user repository call time', async () => {
 		const createUser = { idx: 1, ...createUserDto };
 
-		jest.spyOn(repository, 'findByUserId').mockResolvedValue(null);
-		jest.spyOn(repository, 'createUser').mockResolvedValue(createUser);
+		repository.findByUserId = jest.fn().mockResolvedValue(null);
+		repository.createUser = jest.fn().mockResolvedValue(createUser);
 
 		await service.createUser(createUserDto);
 

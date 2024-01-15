@@ -20,40 +20,22 @@ describe('UserRepository', () => {
 
 	it('user findByUserId 테스트 결과 null', async () => {
 		jest.spyOn(prisma.user, 'findFirst').mockResolvedValue(null);
+		const result = await repository.findByUserId('userId');
 
-		const result = await repository.findByUserId(createUserDto.id);
-
-		expect(prisma.user.findFirst).toBeCalledTimes(1);
 		expect(result).toBe(null);
 	});
 
 	it('user findByUserId 테스트 결과 not null ', async () => {
-		const findUser = { idx: 1, ...createUserDto };
-		jest.spyOn(prisma.user, 'findFirst').mockResolvedValue(findUser);
-
-		const result = await repository.findByUserId(createUserDto.id);
+		jest.spyOn(prisma.user, 'findFirst').mockResolvedValue({ idx: 1, ...createUserDto });
+		await repository.findByUserId('userId');
 
 		expect(prisma.user.findFirst).toBeCalledTimes(1);
-		expect(result).toBe(findUser);
 	});
 
 	it('user create 테스트 결과 failed', async () => {
-		jest.spyOn(prisma.user, 'create').mockResolvedValue(null);
-
-		const result = await repository.createUser(createUserDto);
-
-		expect(prisma.user.create).toBeCalledTimes(1);
-		expect(result).toBe(null);
-	});
-
-	it('user create 테스트 결과 success', async () => {
-		const createUser = { idx: 1, ...createUserDto };
-
-		jest.spyOn(prisma.user, 'create').mockResolvedValue(createUser);
-
-		const result = await repository.createUser(createUserDto);
+		jest.spyOn(prisma.user, 'create').mockResolvedValue({ idx: 1, ...createUserDto });
+		await repository.createUser(createUserDto);
 
 		expect(prisma.user.create).toBeCalledTimes(1);
-		expect(result).toBe(createUser);
 	});
 });

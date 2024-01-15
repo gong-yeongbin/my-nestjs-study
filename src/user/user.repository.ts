@@ -16,11 +16,9 @@ export class UserRepository {
 		}
 	}
 
-	async createUser(createUserDto: CreateUserDto): Promise<User | null> {
+	async createUser(createUserDto: CreateUserDto): Promise<User> {
 		try {
-			const user = await this.prisma.user.create({ data: createUserDto });
-
-			return user ? user : null;
+			return await this.prisma.user.create({ data: createUserDto });
 		} catch (e) {
 			console.log(e);
 		}
