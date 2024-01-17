@@ -48,7 +48,7 @@ describe('UserService', () => {
 	const findOneByUserNameDto: { name: string } = { name: 'userName' };
 
 	it('findOneByUserName 1 call', async () => {
-		jest.spyOn(repository, 'findOneByUserName').mockReturnValue({ idx: 1, id: 'userId', ...findOneByUserNameDto });
+		jest.spyOn(repository, 'findOneByUserName').mockReturnValue({ idx: 1, id: 'userId', password: '1111', ...findOneByUserNameDto });
 		await service.findOneByUserName(findOneByUserNameDto.name);
 
 		expect(repository.findOneByUserName).toBeCalledTimes(1);

@@ -29,11 +29,13 @@ export class UserRepository {
 			idx: 1,
 			id: 'userId1',
 			name: 'john',
+			password: '1111',
 		},
 		{
 			idx: 2,
 			id: 'userId2',
 			name: 'maria',
+			password: '1111',
 		},
 	];
 
