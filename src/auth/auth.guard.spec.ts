@@ -1,10 +1,13 @@
 import { AuthGuard } from './auth.guard';
 import { Request } from 'express';
-import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { HttpArgumentsHost } from '@nestjs/common/interfaces';
+import { UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 describe('AuthGuard unit test', () => {
-	const authGuard = new AuthGuard();
+	const configService = new ConfigService();
+	const jwtService = new JwtService();
+	const authGuard = new AuthGuard(configService, jwtService);
 
 	it('extractTokenFromHeader unit test return undefied', () => {
 		const mockRequest = { headers: { authorization: '' } } as Request;
@@ -29,14 +32,36 @@ describe('AuthGuard unit test', () => {
 		expect(authGuard.extractTokenFromHeader(mockRequest)).toEqual('testtoken');
 	});
 
-	// const mockContext = {
-	// 	switchToHttp: { getRequest: jest.fn() },
-	// } as any;
-	//
-	// it('auth guard canActivate token undefined UnauthorizedException test', () => {
-	// 	mockContext.switchToHttp.getRequest = jest.fn().mockReturnValue({});
-	// 	authGuard.extractTokenFromHeader = jest.fn().mockReturnValue(undefined);
-	//
-	// 	expect(() => authGuard.canActivate(mockContext)).toThrow(new UnauthorizedException());
-	// });
+	const mockContext = {
+		switchToHttp: () => ({
+			getRequest: () => ({
+				headers: {
+					authorization: 'Bearer Token',
+				},
+			}),
+		}),
+	} as any;
+
+	it('auth guard canActivate token undefined UnauthorizedException test', () => {
+		authGuard.extractTokenFromHeader = jest.fn().mockReturnValue(undefined);
+
+		expect(() => authGuard.canActivate(mockContext)).rejects.toThrow(new UnauthorizedException());
+	});
+
+	it('jwtSerivce.verifiyAsync exception test', () => {
+		authGuard.extractTokenFromHeader = jest.fn().mockReturnValue('token');
+		jwtService.verifyAsync = jest.fn().mockRejectedValue(() => {
+			throw new UnauthorizedException();
+		});
+
+		expect(async () => await authGuard.canActivate(mockContext)).rejects.toThrow(new UnauthorizedException());
+	});
+
+	it('auth guard success', async () => {
+		authGuard.extractTokenFromHeader = jest.fn().mockReturnValue('token');
+		jwtService.verifyAsync = jest.fn().mockResolvedValue('payload');
+
+		const result = await authGuard.canActivate(mockContext);
+		expect(result).toBe(true);
+	});
 });
