@@ -3,6 +3,16 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
 import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from './auth.guard';
+import { ExecutionContext } from '@nestjs/common';
+
+const mockAuthGuard = {
+	canActivate(context: ExecutionContext) {
+		const request = context.switchToHttp().getRequest();
+		request['user'] = { id: 1 };
+		return true;
+	},
+};
 
 describe('AuthController', () => {
 	let controller: AuthController;
@@ -13,7 +23,10 @@ describe('AuthController', () => {
 			imports: [UserModule],
 			controllers: [AuthController],
 			providers: [AuthService, JwtService],
-		}).compile();
+		})
+			.overrideGuard(AuthGuard)
+			.useValue(mockAuthGuard)
+			.compile();
 
 		controller = module.get<AuthController>(AuthController);
 		service = module.get<AuthService>(AuthService);
@@ -30,5 +43,9 @@ describe('AuthController', () => {
 
 		await controller.signIn({ username: 'userId1', password: '1112' });
 		expect(service.signIn).toBeCalledTimes(1);
+	});
+
+	it('auth getProfile define test', () => {
+		expect(controller.getProfile).toBeDefined();
 	});
 });
