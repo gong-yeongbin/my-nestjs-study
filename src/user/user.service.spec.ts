@@ -66,4 +66,20 @@ describe('UserService', () => {
 		const result = await service.findOneByUserName(findOneByUserNameDto.name);
 		expect(result).toEqual({ idx: 1, id: 'userId1', ...findOneByUserNameDto });
 	});
+
+	it('findOne function test return undefined', async () => {
+		const result = await service.findOne('mockJohn');
+
+		expect(result).toEqual(undefined);
+	});
+
+	it('fineOne function test return user obj', async () => {
+		const result = await service.findOne('john');
+
+		expect(result).toEqual({
+			userId: 1,
+			username: 'john',
+			password: 'changeme',
+		});
+	});
 });

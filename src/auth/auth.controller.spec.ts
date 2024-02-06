@@ -5,6 +5,7 @@ import { UserModule } from '../user/user.module';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from './auth.guard';
 import { ExecutionContext } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 const mockAuthGuard = {
 	canActivate(context: ExecutionContext) {
@@ -22,7 +23,7 @@ describe('AuthController', () => {
 		const module: TestingModule = await Test.createTestingModule({
 			imports: [UserModule],
 			controllers: [AuthController],
-			providers: [AuthService, JwtService],
+			providers: [AuthService, JwtService, ConfigService],
 		})
 			.overrideGuard(AuthGuard)
 			.useValue(mockAuthGuard)

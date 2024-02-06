@@ -2,7 +2,7 @@ version: "3"
 services:
   db:
     image: postgres:14-alpine
-    container_name: study-postgre
+    container_name: study-postgresql
     ports:
       - 5432:5432
     environment:
