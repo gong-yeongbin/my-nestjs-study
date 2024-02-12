@@ -11,7 +11,8 @@ datasource db {
 }
 
 model User {
-  idx  Int    @id @default(autoincrement())
-  id   String @unique
-  name String
+  user_id     String  @id @unique
+  password    String
+  nick_name   String
+  profile_img String?
 }
