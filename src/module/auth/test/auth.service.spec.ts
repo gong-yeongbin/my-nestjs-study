@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
 import { UserService } from '../../user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { BadGatewayException } from '@nestjs/common';
 
 describe('AuthService', () => {
 	let authService: AuthService;
@@ -31,5 +32,18 @@ describe('AuthService', () => {
 	it('validateUser, found user, match password', () => {
 		userService.findOne = jest.fn().mockReturnValue({ userId: 1, username: 'mockUserName', password: '123' });
 		expect(authService.validateUser('mockUserName', '123')).toEqual({ userId: 1, username: 'mockUserName' });
+	});
+
+	const mockUser = { userId: 'mockUserId', username: 'mockUserName' };
+
+	it('login, get token null or undefiled', () => {
+		jwtService.sign = jest.fn().mockReturnValue(null);
+		expect(() => authService.login(mockUser)).toThrow(new BadGatewayException());
+	});
+
+	it('login, get token', () => {
+		jwtService.sign = jest.fn().mockReturnValue('string token');
+		const result = authService.login(mockUser);
+		expect(result).toEqual({ access_token: 'string token' });
 	});
 });
