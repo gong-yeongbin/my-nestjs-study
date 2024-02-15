@@ -3,6 +3,8 @@ import { AppService } from './app.service';
 import { Request } from 'express';
 import { LocalAuthGuard } from '../../common/guard/local-auth.guard';
 import { AuthService } from '../auth/auth.service';
+import { JwtAuthGuard } from '../../common/guard/jwt-auth.guard';
+import { JwtAuthRefreshGuard } from '../../common/guard/jwt-auth-refresh.guard';
 
 @Controller()
 export class AppController {
@@ -11,6 +13,7 @@ export class AppController {
 		private readonly authService: AuthService
 	) {}
 
+	@UseGuards(JwtAuthGuard)
 	@Get()
 	getHello(): string {
 		return this.appService.getHello();
@@ -20,5 +23,11 @@ export class AppController {
 	@Post('login')
 	login(@Req() request: Request) {
 		return this.authService.login(request['user']);
+	}
+
+	@UseGuards(JwtAuthRefreshGuard)
+	@Get('access_token')
+	getAccessToken(@Req() request: Request) {
+		return this.authService.getAccessToken(request['user']);
 	}
 }

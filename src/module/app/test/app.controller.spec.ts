@@ -2,8 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from '../app.controller';
 import { AppService } from '../app.service';
 import { AuthService } from '../../auth/auth.service';
-import { AuthModule } from '../../auth/auth.module';
 import { Request } from 'express';
+import { UserService } from '../../user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 describe('AppController', () => {
 	let appController: AppController;
@@ -11,9 +13,8 @@ describe('AppController', () => {
 
 	beforeEach(async () => {
 		const app: TestingModule = await Test.createTestingModule({
-			imports: [AuthModule],
 			controllers: [AppController],
-			providers: [AppService],
+			providers: [AppService, AuthService, UserService, JwtService, ConfigService],
 		}).compile();
 
 		appController = app.get<AppController>(AppController);
@@ -23,11 +24,11 @@ describe('AppController', () => {
 	const httpMock = {} as Request;
 
 	it('login, get token', () => {
-		authService.login = jest.fn().mockReturnValue({ access_token: 'string token' });
+		authService.login = jest.fn().mockReturnValue({ access_token: 'mock access token', refresh_token: 'mock refresh token' });
 		httpMock['userId'] = 'mockUserId';
 		httpMock['username'] = 'mockUserName';
 
 		const result = appController.login(httpMock);
-		expect(result).toEqual({ access_token: 'string token' });
+		expect(result).toEqual({ access_token: 'mock access token', refresh_token: 'mock refresh token' });
 	});
 });

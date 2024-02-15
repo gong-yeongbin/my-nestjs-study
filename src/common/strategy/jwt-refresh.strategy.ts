@@ -4,9 +4,9 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'access') {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 	constructor(private readonly configService: ConfigService) {
-		super({ jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), ignoreExpiration: false, secretOrKey: configService.get('JWT_ACCESS_SECRET') });
+		super({ jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), ignoreExpiration: false, secretOrKey: configService.get('JWT_REFRESH_SECRET') });
 	}
 
 	validate(payload: any) {

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
 import { UserService } from '../../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { BadGatewayException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 describe('AuthService', () => {
 	let authService: AuthService;
@@ -11,7 +11,7 @@ describe('AuthService', () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [AuthService, UserService, JwtService],
+			providers: [AuthService, UserService, JwtService, ConfigService],
 		}).compile();
 
 		authService = module.get<AuthService>(AuthService);
@@ -36,14 +36,15 @@ describe('AuthService', () => {
 
 	const mockUser = { userId: 'mockUserId', username: 'mockUserName' };
 
-	it('login, get token null or undefiled', () => {
-		jwtService.sign = jest.fn().mockReturnValue(null);
-		expect(() => authService.login(mockUser)).toThrow(new BadGatewayException());
+	it('login, get token', () => {
+		jwtService.sign = jest.fn().mockReturnValueOnce('mock access token').mockReturnValueOnce('mock refresh token');
+		const result = authService.login(mockUser);
+		expect(result).toEqual({ access_token: 'mock access token', refresh_token: 'mock refresh token' });
 	});
 
-	it('login, get token', () => {
-		jwtService.sign = jest.fn().mockReturnValue('string token');
-		const result = authService.login(mockUser);
-		expect(result).toEqual({ access_token: 'string token' });
+	it('get access token', () => {
+		jwtService.sign = jest.fn().mockReturnValue('mock access token');
+		const result = authService.getAccessToken(mockUser);
+		expect(result).toEqual('mock access token');
 	});
 });
