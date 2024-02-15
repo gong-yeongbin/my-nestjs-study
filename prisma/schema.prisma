@@ -11,8 +11,9 @@ datasource db {
 }
 
 model User {
-  user_id     String  @id @unique
-  password    String
-  nick_name   String
-  profile_img String?
+  user_id     String   @id @unique @db.VarChar(20)
+  password    String   @db.VarChar(20)
+  nick_name   String   @db.VarChar(10)
+  profile_img String?  @db.VarChar(50)
+  created_at  DateTime @default(now())
 }
