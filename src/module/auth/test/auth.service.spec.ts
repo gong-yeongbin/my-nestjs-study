@@ -45,6 +45,6 @@ describe('AuthService', () => {
 	it('get access token', () => {
 		jwtService.sign = jest.fn().mockReturnValue('mock access token');
 		const result = authService.getAccessToken(mockUser);
-		expect(result).toEqual('mock access token');
+		expect(result).toEqual({ access_token: 'mock access token' });
 	});
 });
