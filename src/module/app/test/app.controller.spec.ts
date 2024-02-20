@@ -3,9 +3,9 @@ import { AppController } from '../app.controller';
 import { AppService } from '../app.service';
 import { AuthService } from '../../auth/auth.service';
 import { Request } from 'express';
-import { UserService } from '../../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { UserModule } from '../../user/user.module';
 
 describe('AppController', () => {
 	let appController: AppController;
@@ -13,8 +13,9 @@ describe('AppController', () => {
 
 	beforeEach(async () => {
 		const app: TestingModule = await Test.createTestingModule({
+			imports: [UserModule],
 			controllers: [AppController],
-			providers: [AppService, AuthService, UserService, JwtService, ConfigService],
+			providers: [AppService, AuthService, JwtService, ConfigService],
 		}).compile();
 
 		appController = app.get<AppController>(AppController);
