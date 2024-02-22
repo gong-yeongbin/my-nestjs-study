@@ -21,7 +21,7 @@ describe('UserService', () => {
 	const mockUserInfo = { user_id: 'mockUserId', password: 'mockUserPassword', nick_name: 'mockNickName', profile_img: null, created_at: new Date() };
 
 	it('user findOne not found user', () => {
-		repository.findOne = jest.fn().mockResolvedValue(undefined);
+		repository.findOne = jest.fn().mockResolvedValue(null);
 
 		const result = service.findOne('mockUserId');
 
@@ -62,7 +62,20 @@ describe('UserService', () => {
 		expect(repository.create).toBeCalledTimes(1);
 	});
 
-	it.todo('회원탈퇴');
+	it('회원탈퇴, user_id NotFoundException', () => {
+		repository.findOne = jest.fn().mockResolvedValue(null);
+
+		expect(async () => await service.deleteUser('mockUserId')).rejects.toThrow(new NotFoundException());
+	});
+
+	it('회원탈퇴, 탈퇴 성공', async () => {
+		repository.findOne = jest.fn().mockResolvedValue(mockUserInfo);
+		repository.delete = jest.fn().mockResolvedValue(mockUserInfo);
+
+		await service.deleteUser('mockUserId');
+		expect(repository.delete).toBeCalledTimes(1);
+	});
+
 	it.todo('프로필사진 업로드');
 	it.todo('프로필사진 수정');
 	it.todo('프로필사진 삭제');

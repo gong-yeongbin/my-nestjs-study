@@ -29,4 +29,12 @@ export class UserService {
 		createUserDto.password = await this.hashPassword(createUserDto.password);
 		await this.userRepository.create(createUserDto);
 	}
+
+	async deleteUser(userId: string) {
+		const user = await this.userRepository.findOne(userId);
+
+		if (!user) throw new NotFoundException();
+
+		await this.userRepository.delete(userId);
+	}
 }
