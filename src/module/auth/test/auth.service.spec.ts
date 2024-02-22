@@ -4,6 +4,7 @@ import { UserService } from '../../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserModule } from '../../user/user.module';
+import bcrypt from 'bcrypt';
 
 describe('AuthService', () => {
 	let authService: AuthService;
@@ -21,31 +22,45 @@ describe('AuthService', () => {
 		jwtService = module.get<JwtService>(JwtService);
 	});
 
+	const mockUser = { userId: 'mockUserId', password: 'mockUserPassword' };
+	const mockUserInfo = { userId: 'mockUserId', username: 'mockUserName', password: 'mockUserPassword' };
+
 	it('validateUser, not found user', () => {
 		userService.findOne = jest.fn().mockReturnValue(undefined);
-		expect(authService.validateUser('mockUserName', '123')).toEqual(null);
+		const result = authService.validateUser('mockUserId', 'mockUserPassword');
+
+		expect(result).toBe(null);
 	});
 
-	it('validateUser, found user, not match password', () => {
-		userService.findOne = jest.fn().mockReturnValue({ userId: 1, username: 'mockUserName', password: '123' });
-		expect(authService.validateUser('mockUserName', '1234')).toEqual(null);
+	it('validateUser, found user, not match password', async () => {
+		userService.findOne = jest.fn().mockReturnValue(mockUserInfo);
+		bcrypt.compareSync = jest.fn().mockReturnValue(false);
+
+		const result = authService.validateUser('mockUserId', 'mockUserPassword');
+
+		expect(bcrypt.compareSync).toBeCalledTimes(1);
+		expect(result).toEqual(null);
 	});
 
-	it('validateUser, found user, match password', () => {
-		userService.findOne = jest.fn().mockReturnValue({ userId: 1, username: 'mockUserName', password: '123' });
-		expect(authService.validateUser('mockUserName', '123')).toEqual({ userId: 1, username: 'mockUserName' });
-	});
+	it('validateUser, found user, match password', async () => {
+		userService.findOne = jest.fn().mockReturnValue(mockUserInfo);
+		bcrypt.compareSync = jest.fn().mockReturnValue(true);
 
-	const mockUser = { userId: 'mockUserId', username: 'mockUserName' };
+		const result = authService.validateUser('mockUserName', 'mockUserPassword');
+
+		expect(result).toEqual({ userId: 'mockUserId', username: 'mockUserName' });
+	});
 
 	it('login, get token', () => {
 		jwtService.sign = jest.fn().mockReturnValueOnce('mock access token').mockReturnValueOnce('mock refresh token');
+
 		const result = authService.login(mockUser);
 		expect(result).toEqual({ access_token: 'mock access token', refresh_token: 'mock refresh token' });
 	});
 
 	it('get access token', () => {
 		jwtService.sign = jest.fn().mockReturnValue('mock access token');
+
 		const result = authService.getAccessToken(mockUser);
 		expect(result).toEqual({ access_token: 'mock access token' });
 	});
