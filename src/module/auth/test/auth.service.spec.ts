@@ -25,9 +25,9 @@ describe('AuthService', () => {
 	const mockUser = { userId: 'mockUserId', password: 'mockUserPassword' };
 	const mockUserInfo = { userId: 'mockUserId', username: 'mockUserName', password: 'mockUserPassword' };
 
-	it('validateUser, not found user', () => {
+	it('validateUser, not found user', async () => {
 		userService.findOne = jest.fn().mockReturnValue(undefined);
-		const result = authService.validateUser('mockUserId', 'mockUserPassword');
+		const result = await authService.validateUser('mockUserId', 'mockUserPassword');
 
 		expect(result).toBe(null);
 	});
@@ -36,7 +36,7 @@ describe('AuthService', () => {
 		userService.findOne = jest.fn().mockReturnValue(mockUserInfo);
 		bcrypt.compareSync = jest.fn().mockReturnValue(false);
 
-		const result = authService.validateUser('mockUserId', 'mockUserPassword');
+		const result = await authService.validateUser('mockUserId', 'mockUserPassword');
 
 		expect(bcrypt.compareSync).toBeCalledTimes(1);
 		expect(result).toEqual(null);
@@ -46,7 +46,7 @@ describe('AuthService', () => {
 		userService.findOne = jest.fn().mockReturnValue(mockUserInfo);
 		bcrypt.compareSync = jest.fn().mockReturnValue(true);
 
-		const result = authService.validateUser('mockUserName', 'mockUserPassword');
+		const result = await authService.validateUser('mockUserName', 'mockUserPassword');
 
 		expect(result).toEqual({ userId: 'mockUserId', username: 'mockUserName' });
 	});

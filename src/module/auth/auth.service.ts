@@ -11,8 +11,8 @@ export class AuthService {
 		private readonly jwtService: JwtService,
 		private readonly configService: ConfigService
 	) {}
-	validateUser(id: string, pass: string) {
-		const user = this.userService.findOne(id);
+	async validateUser(id: string, pass: string) {
+		const user = await this.userService.findOne(id);
 
 		if (user && bcrypt.compareSync(pass, user.password)) {
 			const { password, ...result } = user;
