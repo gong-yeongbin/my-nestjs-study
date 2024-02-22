@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user.service';
 import { UserRepository } from '../user.repository';
 import { PrismaService } from '../../../prisma.service';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 
 describe('UserService', () => {
 	let service: UserService;
@@ -17,24 +17,32 @@ describe('UserService', () => {
 		repository = module.get<UserRepository>(UserRepository);
 	});
 
-	it('user findOne not found user', () => {
-		const result = service.findOne('john1');
-		expect(result).toEqual(undefined);
-	});
-
-	it('user findOne find user', () => {
-		const result = service.findOne('john');
-		expect(result).toEqual({ userId: 1, username: 'john', password: 'changeme' });
-	});
-
 	const mockUserDto = { user_id: 'mockUserId', password: 'mockUserPassword', nick_name: 'mockNickName' };
 	const mockUserInfo = { user_id: 'mockUserId', password: 'mockUserPassword', nick_name: 'mockNickName', profile_img: null, created_at: new Date() };
 
+	it('user findOne not found user', () => {
+		repository.findOne = jest.fn().mockResolvedValue(undefined);
+
+		const result = service.findOne('mockUserId');
+
+		expect(repository.findOne).toBeCalledTimes(1);
+		expect(result).rejects.toThrow(new NotFoundException());
+	});
+
+	it('user findOne find user', async () => {
+		repository.findOne = jest.fn().mockResolvedValue(mockUserInfo);
+
+		const result = await service.findOne('mockUserId');
+
+		expect(repository.findOne).toBeCalledTimes(1);
+		expect(result).toEqual(mockUserInfo);
+	});
+
 	it('비밀번호 암호화 함수', async () => {
-		const result = await service.hashPassword(mockUserDto.password);
+		const result = await service.hashPassword('mockUserPassword');
 		expect(result).not.toBeUndefined();
 		expect(result).not.toBeNull();
-		expect(result).not.toEqual(mockUserDto.password);
+		expect(result).not.toEqual('mockUserPassword');
 	});
 
 	it('회원가입, user_id 중복 409', () => {

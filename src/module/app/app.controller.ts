@@ -3,7 +3,6 @@ import { AppService } from './app.service';
 import { Request } from 'express';
 import { LocalAuthGuard } from '../../common/guard/local-auth.guard';
 import { AuthService } from '../auth/auth.service';
-import { JwtAuthGuard } from '../../common/guard/jwt-auth.guard';
 import { JwtAuthRefreshGuard } from '../../common/guard/jwt-auth-refresh.guard';
 
 @Controller()

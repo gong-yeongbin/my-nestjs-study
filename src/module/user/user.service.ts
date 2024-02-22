@@ -1,27 +1,19 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 
 export type User = any;
 
 @Injectable()
 export class UserService {
 	constructor(private readonly userRepository: UserRepository) {}
-	private readonly users = [
-		{
-			userId: 1,
-			username: 'john',
-			password: 'changeme',
-		},
-		{
-			userId: 2,
-			username: 'maria',
-			password: 'guess',
-		},
-	];
 
-	findOne(username: string): User | undefined {
-		return this.users.find((user) => user.username === username);
+	async findOne(userId: string): Promise<User | undefined> {
+		const user = await this.userRepository.findOne(userId);
+
+		if (!user) throw new NotFoundException();
+
+		return user;
 	}
 
 	async hashPassword(password: string): Promise<string> {
