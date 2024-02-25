@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import bcrypt from 'bcrypt';
+import { CreateUserDto } from './dto/create-user.dto';
 
 export type User = any;
 
@@ -21,7 +22,7 @@ export class UserService {
 		return await bcrypt.hash(password, saltCost);
 	}
 
-	async createUser(createUserDto: { user_id: string; password: string; nick_name: string }) {
+	async createUser(createUserDto: CreateUserDto) {
 		const user = await this.userRepository.findOne(createUserDto.user_id);
 
 		if (user) throw new ConflictException();
