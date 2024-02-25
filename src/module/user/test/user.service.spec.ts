@@ -81,12 +81,9 @@ describe('UserService', () => {
 		mockUserInfo['profile_img'] = 'aws image path';
 		jest.spyOn(repository, 'imageUpload').mockResolvedValue(mockUserInfo);
 
-		const result = await service.imageUpload('mockUserId', 'mockImageUrl');
+		const result = await service.updateProfileImage('mockUserId', 'mockImageUrl');
 
 		expect(repository.imageUpload).toBeCalledTimes(1);
 		expect(result).toEqual(mockUserInfo);
 	});
-
-	it.todo('프로필사진 수정');
-	it.todo('프로필사진 삭제');
 });
