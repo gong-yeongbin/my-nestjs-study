@@ -37,4 +37,8 @@ export class UserService {
 
 		await this.userRepository.delete(userId);
 	}
+
+	async imageUpload(userId: string, imageUrl: string) {
+		return await this.userRepository.imageUpload(userId, imageUrl);
+	}
 }

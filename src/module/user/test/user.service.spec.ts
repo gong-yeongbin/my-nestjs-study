@@ -18,7 +18,8 @@ describe('UserService', () => {
 	});
 
 	const mockUserDto = { user_id: 'mockUserId', password: 'mockUserPassword', nick_name: 'mockNickName' };
-	const mockUserInfo = { user_id: 'mockUserId', password: 'mockUserPassword', nick_name: 'mockNickName', profile_img: null, created_at: new Date() };
+	let mockUserInfo = {};
+	mockUserInfo = { user_id: 'mockUserId', password: 'mockUserPassword', nick_name: 'mockNickName', profile_img: null, created_at: new Date() };
 
 	it('user findOne not found user', () => {
 		repository.findOne = jest.fn().mockResolvedValue(null);
@@ -76,7 +77,16 @@ describe('UserService', () => {
 		expect(repository.delete).toBeCalledTimes(1);
 	});
 
-	it.todo('프로필사진 업로드');
+	it('프로필사진 업로드', async () => {
+		mockUserInfo['profile_img'] = 'aws image path';
+		jest.spyOn(repository, 'imageUpload').mockResolvedValue(mockUserInfo);
+
+		const result = await service.imageUpload('mockUserId', 'mockImageUrl');
+
+		expect(repository.imageUpload).toBeCalledTimes(1);
+		expect(result).toEqual(mockUserInfo);
+	});
+
 	it.todo('프로필사진 수정');
 	it.todo('프로필사진 삭제');
 });
