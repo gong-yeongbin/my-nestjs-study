@@ -39,7 +39,11 @@ export class UserService {
 		await this.userRepository.delete(userId);
 	}
 
-	async updateProfileImage(userId: string, imageUrl: string) {
-		return await this.userRepository.imageUpload(userId, imageUrl);
+	async updateUser(updateUserDto: { user_id: string; nick_name: string; profile_img: string }) {
+		const user = await this.userRepository.findOne(updateUserDto.user_id);
+
+		if (!user) throw new NotFoundException();
+
+		return await this.userRepository.update(updateUserDto);
 	}
 }

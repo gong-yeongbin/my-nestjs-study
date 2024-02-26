@@ -77,13 +77,29 @@ describe('UserService', () => {
 		expect(repository.delete).toBeCalledTimes(1);
 	});
 
-	it('프로필사진 업로드', async () => {
-		mockUserInfo['profile_img'] = 'aws image path';
-		jest.spyOn(repository, 'imageUpload').mockResolvedValue(mockUserInfo);
+	const mockUpdateUser = { user_id: 'mockUserId', nick_name: 'mockNickName', profile_img: 'mockProfileImg' };
 
-		const result = await service.updateProfileImage('mockUserId', 'mockImageUrl');
+	it('회원 정보 수정(updateUser), NotFoundException 테스트', () => {
+		repository.findOne = jest.fn().mockResolvedValue(null);
 
-		expect(repository.imageUpload).toBeCalledTimes(1);
-		expect(result).toEqual(mockUserInfo);
+		expect(() => service.updateUser(mockUpdateUser)).rejects.toThrow(new NotFoundException());
+	});
+
+	it('회원 정보 수정(updateUser), userRepository 호출 테스트', async () => {
+		repository.findOne = jest.fn().mockResolvedValue(true);
+		repository.update = jest.fn();
+
+		await service.updateUser({ user_id: 'mockUserId', nick_name: 'mockNickName', profile_img: 'mockProfileImg' });
+
+		expect(repository.update).toBeCalledTimes(1);
+	});
+
+	it('회원 정보 수정(updateUser)', async () => {
+		mockUpdateUser['created_at'] = new Date();
+		repository.findOne = jest.fn().mockResolvedValue(true);
+		repository.update = jest.fn().mockResolvedValue(mockUpdateUser);
+
+		const result = await service.updateUser(mockUpdateUser);
+		expect(result).toEqual(mockUpdateUser);
 	});
 });
