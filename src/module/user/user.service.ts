@@ -2,6 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { UserRepository } from './user.repository';
 import bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 export type User = any;
 
@@ -39,7 +40,7 @@ export class UserService {
 		await this.userRepository.delete(userId);
 	}
 
-	async updateUser(updateUserDto: { user_id: string; nick_name: string; profile_img: string }) {
+	async updateUser(updateUserDto: UpdateUserDto) {
 		const user = await this.userRepository.findOne(updateUserDto.user_id);
 
 		if (!user) throw new NotFoundException();
