@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from '../../prisma.service';
@@ -12,6 +12,6 @@ import { JwtRefreshStrategy } from '../../common/strategy/jwt-refresh.strategy';
 @Module({
 	imports: [ConfigModule.forRoot({ isGlobal: true, cache: true }), AuthModule, UserModule, JwtModule.register({})],
 	controllers: [AppController],
-	providers: [AppService, PrismaService, JwtStrategy, JwtRefreshStrategy],
+	providers: [AppService, PrismaService, JwtStrategy, JwtRefreshStrategy, Logger],
 })
 export class AppModule {}
