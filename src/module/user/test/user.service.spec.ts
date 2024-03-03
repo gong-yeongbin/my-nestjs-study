@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user.service';
 import { UserRepository } from '../user.repository';
-import { PrismaService } from '../../../prisma.service';
 import { ConflictException, NotFoundException } from '@nestjs/common';
+import { PrismaModule } from '../../prisma/prisma.module';
 
 describe('UserService', () => {
 	let service: UserService;
@@ -10,7 +10,8 @@ describe('UserService', () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [UserService, UserRepository, PrismaService],
+			imports: [PrismaModule],
+			providers: [UserService, UserRepository],
 		}).compile();
 
 		service = module.get<UserService>(UserService);

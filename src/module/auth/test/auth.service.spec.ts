@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserModule } from '../../user/user.module';
 import bcrypt from 'bcrypt';
+import { PrismaModule } from '../../prisma/prisma.module';
 
 describe('AuthService', () => {
 	let authService: AuthService;
@@ -13,7 +14,7 @@ describe('AuthService', () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			imports: [UserModule],
+			imports: [UserModule, PrismaModule],
 			providers: [AuthService, JwtService, ConfigService],
 		}).compile();
 

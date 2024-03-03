@@ -6,6 +6,7 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserModule } from '../../user/user.module';
+import { PrismaModule } from '../../prisma/prisma.module';
 
 describe('AppController', () => {
 	let appController: AppController;
@@ -14,7 +15,7 @@ describe('AppController', () => {
 
 	beforeEach(async () => {
 		const app: TestingModule = await Test.createTestingModule({
-			imports: [UserModule],
+			imports: [UserModule, PrismaModule],
 			controllers: [AppController],
 			providers: [AppService, AuthService, JwtService, ConfigService],
 		}).compile();

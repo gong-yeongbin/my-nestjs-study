@@ -1,10 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-	constructor(private readonly logger: Logger) {}
+	constructor() {}
 	getHello() {
-		this.logger.log('logger test', AppService.name);
 		return 'hello world!!!';
 	}
 }
