@@ -2,7 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user.service';
 import { UserRepository } from '../user.repository';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { PrismaModule } from '../../prisma/prisma.module';
+
+const mockRepositroy = {
+	findOne: jest.fn(),
+	create: jest.fn(),
+	update: jest.fn(),
+	delete: jest.fn(),
+};
 
 describe('UserService', () => {
 	let service: UserService;
@@ -10,8 +16,7 @@ describe('UserService', () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			imports: [PrismaModule],
-			providers: [UserService, UserRepository],
+			providers: [UserService, { provide: UserRepository, useValue: mockRepositroy }],
 		}).compile();
 
 		service = module.get<UserService>(UserService);
@@ -22,8 +27,15 @@ describe('UserService', () => {
 	let mockUserInfo = {};
 	mockUserInfo = { user_id: 'mockUserId', password: 'mockUserPassword', nick_name: 'mockNickName', profile_img: null, created_at: new Date() };
 
+	it('비밀번호 암호화 함수', async () => {
+		const result = await service.hashPassword('mockUserPassword');
+		expect(result).not.toBeUndefined();
+		expect(result).not.toBeNull();
+		expect(result).not.toEqual('mockUserPassword');
+	});
+
 	it('user findOne not found user', () => {
-		repository.findOne = jest.fn().mockResolvedValue(null);
+		repository.findOne = jest.fn().mockResolvedValue(undefined);
 
 		const result = service.findOne('mockUserId');
 
@@ -40,26 +52,24 @@ describe('UserService', () => {
 		expect(result).toEqual(mockUserInfo);
 	});
 
-	it('비밀번호 암호화 함수', async () => {
-		const result = await service.hashPassword('mockUserPassword');
-		expect(result).not.toBeUndefined();
-		expect(result).not.toBeNull();
-		expect(result).not.toEqual('mockUserPassword');
-	});
-
 	it('회원가입, user_id 중복 409', () => {
 		repository.findOne = jest.fn().mockResolvedValue(mockUserInfo);
 		expect(async () => await service.createUser(mockUserDto)).rejects.toThrow(new ConflictException());
 	});
 
 	it('회원가입, 비밀번호 해쉬함수 호출 여부', async () => {
-		jest.spyOn(service, 'hashPassword');
+		repository.findOne = jest.fn().mockResolvedValue(undefined);
+		service.hashPassword = jest.fn();
+
 		await service.createUser(mockUserDto);
 		expect(service.hashPassword).toBeCalledTimes(1);
 	});
 
 	it('회원가입, 비밀번호 해쉬 후 저장', async () => {
-		jest.spyOn(repository, 'create');
+		repository.findOne = jest.fn().mockResolvedValue(undefined);
+		repository.create = jest.fn();
+		service.hashPassword = jest.fn();
+
 		await service.createUser(mockUserDto);
 		expect(repository.create).toBeCalledTimes(1);
 	});
