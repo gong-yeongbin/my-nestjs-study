@@ -35,7 +35,7 @@ describe('UserController', () => {
 	});
 
 	it('유저 생성(createUser), userService.createUser', () => {
-		jest.spyOn(service, 'createUser');
+		service.createUser = jest.fn();
 
 		const result = controller.createUser(mockCreateUser);
 		expect(result).not.toEqual(mockCreateUser);
